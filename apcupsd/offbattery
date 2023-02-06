@@ -1,0 +1,24 @@
+#!/bin/bash
+log=/var/log/sendsms.log
+
+HOSTS="192.168.1.1 192.168.1.3 192.168.1.5 192.168.1.7 192.168.1.9 192.168.1.100 192.168.1.102 192.168.1.104 192.168.1.105 192.168.1.109"
+MSG="ECTb KOHTAKT! "
+PHONE="89212230911 89214519382 89114295979"
+
+sleep 10m
+
+for h in $HOSTS
+do
+ fping -u $h >& /dev/null
+  if [ $? -ne 0 ]; then
+   MSG=${MSG}${h}'-DOWN ';
+  fi
+done
+
+for p in $PHONE
+do
+ echo `date +%d-%m-%Y` _ `date +%R` _ $p _ $MSG>>$log
+ echo $MSG | gammu sendsms TEXT $p>>$log
+done
+
+exit 0

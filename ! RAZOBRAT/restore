@@ -1,0 +1,62 @@
+#!/bin/sh
+
+echo "Выберите номер сервера для восстановления:"
+echo "1. LDAP"
+echo "2. MAIL"
+echo "3. ROUTER"
+echo "4. SAMBA"
+                read -p "(1.2.3.4)" answer
+                case "$answer" in
+                        "1" )
+                        echo "Ну поехали"
+                        server=ldap
+                        ;;
+ 
+                        "2" )
+                        echo "Ну поехали"
+                        server=mail
+                        ;;
+ 
+                        "3" )
+                        echo "Ну поехали"
+                        server=router
+                        ;;
+ 
+                        "4" )
+                        echo "Ну поехали"
+                        server=samba
+                        ;;
+ 
+                esac
+
+#echo $server
+
+
+net="auto lo \n
+iface lo inet loopback \n
+
+auto eth0 \n
+iface eth0 inet static \n
+address 192.168.1.242 \n
+netmask 255.255.255.0 \n
+gateway 192.168.1.1 \n"
+
+echo $net > /etc/network/interfaces
+
+/etc/init.d/networking restart
+
+apt-get -qq update && apt-get -qq install nano mc duplicity
+
+mount /dev/sda1 /mnt
+rm -rf /mnt/*
+
+duplicity restore --file-to-restore etc/passwd ftp://back:save@192.168.1.100/ebox/$server /etc/passwd --no-encryption --force
+duplicity restore --file-to-restore etc/group ftp://back:save@192.168.1.100/ebox/$server /etc/group --no-encryption --force
+duplicity restore ftp://back:save@192.168.1.100/ebox/$server /mnt/ --no-encryption --force
+
+mkdir -p /mnt/dev
+mkdir -p /mnt/sys
+mkdir -p /mnt/proc
+
+rm -fr /mnt/var/lock/*
+rm -fr /mnt/var/lock/*

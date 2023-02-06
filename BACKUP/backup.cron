@@ -1,0 +1,6 @@
+#SHELL=/bin/bash
+#PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+00	09	* * 5	root	/home/main/scripts/mail_dir.sh
+*/20 	9-20	* * *	root	/home/main/scripts/webmaildir.sh
+

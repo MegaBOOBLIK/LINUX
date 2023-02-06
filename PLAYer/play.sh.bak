@@ -1,0 +1,57 @@
+#!/bin/bash
+# 19-02-2013
+
+# Рабочие папки
+mess=/home/media/MESSAGE
+list=/home/media/PLAY_LIST
+
+# Пауза между рекламами, В СЕКУНДАХ !!! 900 = 15мин
+zad=900
+
+# Уменьшить громкость, на X шагов через задержку Y между шагами
+function vdo (){
+ n=1
+ while [ $n -lt $1 ]
+ do
+  totem --volume-down
+  sleep $2
+  n=`expr $n + 1`
+  echo $n
+ done
+}
+
+# Увеличить громкость, на ...
+function vup (){
+ n=1
+ while [ $n -lt $1 ]
+ do
+  totem --volume-up
+  sleep $2
+  n=`expr $n + 1`
+  echo $n
+ done
+}
+
+### На этом ПК в тотеме 13 уровней громкости
+
+# Проверка в какком формате выводит день недели
+#echo $list/`date +%a`m3u
+
+# Запускаем плеер !!!
+totem $list/`date +%a`m3u &
+# Без задержки не работает =(
+sleep 1
+
+# Нормализуем громкость
+vdo 15 0
+vup 10 0
+
+while true
+do
+ sleep $zad
+ vdo 15 0.1
+ totem --play-pause
+ mplayer -af volume=-5 "$mess/$(ls $mess | shuf -n1)"
+ totem --play-pause
+ vup 10 0.1
+done

@@ -1,0 +1,46 @@
+sudo apt-get install gammu
+
+/etc/gammurc or ~/.gammurc
+[gammu]
+port = /dev/ttyUSB0
+connection = at115200
+startinfo = no
+name=Huawei
+synchronizetime = no
+use_locking = no
+gammucoding = utf8
+model=E173
+
+sudo gammu  --identify
+
+sudo chmod 777 /dev/ttyUSB0
+
+sudo echo "Привет" | gammu sendsms TEXT +79212230911 -unicode
+
+https://forum.iobroker.net/viewtopic.php?t=237
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+apt-get install gnokii
+
+Сождаем конфиг:
+
+touch /etc/sms.conf
+
+nano /etc/sms.conf
+
+[global]
+port = /dev/ttyUSB0
+model = AT
+initlength = default
+connection = serial
+use_locking = no
+serial_baudrate = 115200
+
+Отправляем смс следующей командой:
+
+echo "text" | gnokii --config /etc/sms.conf --sendsms +7XXXXXXXXXX
+
+

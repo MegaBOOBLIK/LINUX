@@ -1,0 +1,1 @@
+rdesktop -g 1280x864 -u anm -r lptport:lpt1=/dev/lp0 -a8 192.168.1.102

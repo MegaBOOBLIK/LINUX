@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+PERCENT=$1
+TO=$2
+FROM="it@kodi.karelia.ru"
+qwf="/tmp/quota.warning.$$"
+xmpp_mes="/tmp/xmpp.warning.$$"
+usser=`echo $2 | cut -d"." -f1`
+log=/var/log/mail_dir.log
+
+
+echo "kodi@kodi        spamspam" > /tmp/xmppconf.$$
+chmod 600 /tmp/xmppconf.$$
+
+echo `date +%x_%X` $TO $1 % >> $log
+
+
+if [ "$1" -eq "90" ]
+then
+#echo "Date: `date`" >> $qwf
+echo "From: $FROM" > $qwf
+echo "Content-Type: text/plain;charset=utf-8" >> $qwf
+echo "To: $TO" >> $qwf
+echo "Subject: Ваш почтовый ящик полон на $1 %." >> $qwf
+echo "" >> $qwf
+echo "ВНИМАНИЕ! Ваш почтовый ящик, $TO заполнен на $1 %!" >> $qwf
+echo "" >> $qwf
+echo "В случае максимального заполнения, Ваша электронная почна РАБОТАТЬ НЕ БУДЕТ!" >> $qwf
+echo "" >> $qwf
+echo "Пожалуйста почистите ящик Вашей электронной почты, от старых или объёмных сообщений." >> $qwf
+echo "Напоминание: Не забудьте \"очистить корзину\" после удаления писем." >> $qwf
+echo "" >> $qwf
+echo "Текущее состояние ящика можно проверить здесь http://kodi/mail_dir.html" >> $qwf
+echo "При возникновении вопросов обращайтесь в отдел IT." >> $qwf
+cat $qwf | /usr/sbin/sendmail $TO 
+rm -f $qwf
+
+
+echo "ВНИМАНИЕ! Ваш почтовый ящик, $TO заполнен на $1 %!" >> $xmpp_mes
+echo "" >> $xmpp_mes
+echo "В случае максимального заполнения, Ваша электронная почна РАБОТАТЬ НЕ БУДЕТ!" >> $xmpp_mes
+echo "" >> $xmpp_mes
+echo "Пожалуйста почистите ящик Вашей электронной почты, от старых или объёмных сообщений." >> $xmpp_mes
+echo "Напоминание: Не забудьте \"очистить корзину\" после удаления писем." >> $xmpp_mes
+echo "" >> $xmpp_mes
+echo "Текущее состояние ящика можно проверить здесь http://kodi/mail_dir.html" >> $xmpp_mes
+echo "При возникновении вопросов обращайтесь в отдел IT." >> $xmpp_mes
+
+sendxmpp -f /tmp/xmppconf.$$ -s "ACHTUNG!!!" -m $xmpp_mes -j 192.168.1.103:5222 $usser
+
+rm -f $xmpp_mes
+rm -f /tmp/xmppconf.$$
+
+fi
+
+if [ "$1" -ge "95" ]
+then
+#echo "Date: `date`" >> $qwf
+echo "From: $FROM" >> $qwf
+echo "To: $TO,$FROM" >> $qwf
+echo "Subject: ПОЧТОВЫЙ ЯЩИК $TO ПЕРЕПОЛНЕН!" >> $qwf
+echo "Content-Type: text/plain;charset=utf-8" >> $qwf
+echo "" >> $qwf
+echo "Ваша электронная почта НЕ РАБОТАЕТ!" >> $qwf
+echo "" >> $qwf
+echo "Пожалуйста почистите ящик Вашей электронной почты, от старых или объёмных сообщений." >> $qwf
+echo "Напоминание: Не забудьте "очистить корзину" после удаления писем." >> $qwf
+echo "" >> $qwf
+echo "Текущее состояние ящика можно проверить здесь http://kodi/mail_dir.html" >> $qwf
+echo "При возникновении вопросов обращайтесь в отдел IT." >> $qwf
+echo "" >> $qwf
+cat $qwf | /usr/sbin/sendmail $TO,$FROM
+rm -f $qwf
+
+
+echo "Ваша электронная почта $TO НЕ РАБОТАЕТ!" >> $xmpp_mes
+echo "" >> $xmpp_mes
+echo "Пожалуйста почистите ящик Вашей электронной почты ($TO), от старых или объёмных сообщений." >> $xmpp_mes
+echo "Напоминание: Не забудьте "очистить корзину" после удаления писем." >> $xmpp_mes
+echo "" >> $xmpp_mes
+echo "Текущее состояние ящика можно проверить здесь http://kodi/mail_dir.html" >> $xmpp_mes
+echo "При возникновении вопросов обращайтесь в отдел IT." >> $xmpp_mes
+
+sendxmpp -f /tmp/xmppconf.$$ -s "ACHTUNG!!!" -m $xmpp_mes -j 192.168.1.103:5222 $usser
+echo "Ящик $TO заполнен на $1 %" | sendxmpp -f /tmp/xmppconf.$$ -s "ACHTUNG!!!" -j 192.168.1.103:5222 gds@kodi
+
+rm -f $xmpp_mes
+rm -f /tmp/xmppconf.$$
+fi

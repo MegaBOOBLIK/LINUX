@@ -1,0 +1,12 @@
+#!/bin/bash
+log=/var/log/sendsms.log
+MSG="Power DOWN..."
+PHONE="89212230911 89214519382 89114295979"
+
+for p in $PHONE
+do
+ echo `date +%d-%m-%Y` _ `date +%R` _ $p _ $MSG>>$log
+ echo $MSG | gammu sendsms TEXT $p>>$log
+done
+
+exit 0

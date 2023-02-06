@@ -1,0 +1,15 @@
+#!/bin/bash
+
+LIMIT=300
+n=0
+t=3
+while [ $n -le "$LIMIT" ]
+do
+ n=$(($n+1))
+ 
+for i in `cat ./tel`
+do echo $i > ./tel$t
+done
+
+t=$(($t+1))
+done
