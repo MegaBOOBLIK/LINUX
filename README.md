@@ -1,2 +1,2 @@
 # LINUX
- My BASH scripts/
+ My BASH scripts.
